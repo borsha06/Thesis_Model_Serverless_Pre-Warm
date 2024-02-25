@@ -1,0 +1,92 @@
+ // const userPool = new cdk.aws_cognito.UserPool(this, 'UserPool', {
+        //     selfSignUpEnabled: true,
+        //     autoVerify: {
+        //         email: true,
+        //     },
+        // });
+        //
+        // const userPoolClient = new cdk.aws_cognito.UserPoolClient(this, 'UserPoolClient', {
+        //     userPool,
+        //     authFlows: {
+        //         userPassword: true,
+        //     },
+        // });
+        //
+        // const authorizer = new cdk.aws_apigateway.CognitoUserPoolsAuthorizer(this, 'Authorizer', {
+        //     cognitoUserPools: [userPool],
+        //     identitySource: 'method.request.header.Authorization',
+        // });
+        //
+        // const userSignup = new cdk.aws_lambda_nodejs.NodejsFunction(this, 'signup', {
+        //     entry: join(__dirname, 'userSignup', 'handler.ts'),
+        //     handler: 'handler',
+        //     runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
+        //     bundling: {
+        //         externalModules: ['@aws-sdk'],
+        //     },
+        //     environment: {
+        //         USER_POOL_CLIENT_ID: userPoolClient.userPoolClientId,
+        //     },
+        // });
+        //
+        // userSignup.addToRolePolicy(
+        //     new cdk.aws_iam.PolicyStatement({
+        //         actions: ['cognito-idp:SignUp'],
+        //         resources: [userPool.userPoolArn],
+        //     })
+        // );
+        //
+        // const userSignin = new cdk.aws_lambda_nodejs.NodejsFunction(this, 'signin', {
+        //     entry: join(__dirname, 'userSignin', 'handler.ts'),
+        //     handler: 'handler',
+        //     runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
+        //     bundling: {
+        //         externalModules: ['@aws-sdk'],
+        //     },
+        //     environment: {
+        //         USER_POOL_CLIENT_ID: userPoolClient.userPoolClientId,
+        //     },
+        // });
+        //
+        // userSignin.addToRolePolicy(
+        //     new cdk.aws_iam.PolicyStatement({
+        //         actions: ['cognito-idp:InitiateAuth', 'cognito-idp:RespondToAuthChallenge'],
+        //         resources: [userPool.userPoolArn],
+        //     })
+        // );
+        //
+        // const confirmSignup = new cdk.aws_lambda_nodejs.NodejsFunction(this, 'confirm', {
+        //     entry: join(__dirname, 'confirmSignup', 'handler.ts'),
+        //     handler: 'handler',
+        //     runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
+        //     bundling: {
+        //         externalModules: ['@aws-sdk'],
+        //     },
+        //     environment: {
+        //         USER_POOL_CLIENT_ID: userPoolClient.userPoolClientId,
+        //     },
+        // });
+        //
+        // confirmSignup.addToRolePolicy(
+        //     new cdk.aws_iam.PolicyStatement({
+        //         actions: ['cognito-idp:ConfirmSignUp'],
+        //         resources: [userPool.userPoolArn],
+        //     })
+        // );
+        //
+        // const secret = new cdk.aws_lambda_nodejs.NodejsFunction(this, 'secret', {
+        //     entry: join(__dirname, 'secret', 'handler.ts'),
+        //     handler: 'handler',
+        //     runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
+        //     bundling: {
+        //         externalModules: ['@aws-sdk'],
+        //     },
+        // });
+        //
+        // api.root.addResource('sign-up').addMethod('POST', new cdk.aws_apigateway.LambdaIntegration(userSignup));
+        // api.root.addResource('sign-in').addMethod('POST', new cdk.aws_apigateway.LambdaIntegration(userSignin));
+        // api.root.addResource('confirm').addMethod('POST', new cdk.aws_apigateway.LambdaIntegration(confirmSignup));
+        // api.root.addResource('secret').addMethod('GET', new cdk.aws_apigateway.LambdaIntegration(secret), {
+        //     authorizer,
+        //     authorizationType: cdk.aws_apigateway.AuthorizationType.COGNITO,
+        // });
