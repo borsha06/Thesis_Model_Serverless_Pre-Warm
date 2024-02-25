@@ -1,0 +1,54 @@
+% Configuration
+\input{includes/config.tex}
+%
+\begin{document}
+%
+% Titlepage
+\maketitle{Master Thesis}{International Software Systems Science}{Model Based Pre - Warming to Mitigate the
+Cold Start of Serverless Function
+}{Tasfia Sharmin}{04.03.2023}
+%
+% TOCs
+\pagenumbering{Roman}
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+\newpage
+\lstlistoflistings
+\newpage
+\fancyhead[LO]{\footnotesize\sc\nouppercase{Abbreviations}}
+\input{abbreviations/abbreviations.tex}
+\newpage
+\fancyhead[LO]{\footnotesize\sc\nouppercase{\leftmark}}
+\setcounter{page}{1}
+\pagenumbering{arabic}
+%
+% Insert your chapters here
+%
+\input{sections/chapter-1.tex}
+\newpage
+%
+\input{sections/background.tex}
+\newpage
+%
+\input{sections/platforms.tex}
+\newpage
+%
+\input{sections/chapter-2.tex}
+%
+\newpage
+%
+% References
+\addcontentsline{toc}{section}{References}
+\bibliographystyle{alpha}
+%
+% Insert your bibliography here
+\bibliography{bibliography/references}
+\newpage
+%
+% Eigenständigkeitserklärung APO
+\makedeclaration{master’s thesis}{04.03.2024}{Tasfia Sharmin}
+%
+\end{document}
