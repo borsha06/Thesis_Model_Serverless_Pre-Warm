@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
 const { v4: uuidv4 } = require("uuid");
 
-const url = "mongodb+srv://<username>:<password>.06@bookstoredb.mongocluster.cosmos.azure.com/?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000";
+const url = ""; 
 const client = new MongoClient(url);
 
 
