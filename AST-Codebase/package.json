@@ -11,10 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@babel/parser": "^7.23.9",
     "@babel/preset-typescript": "^7.23.3",
-    "@babel/traverse": "^7.23.9",
     "typescript": "^5.3.3"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@babel/parser": "^7.24.0",
+    "@babel/traverse": "^7.24.0"
+  }
 }

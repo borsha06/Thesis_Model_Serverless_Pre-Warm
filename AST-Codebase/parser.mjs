@@ -1,113 +1,99 @@
-
-// const code = "2 + (4 * 7)";
-//
-// const ast = parse(code);
-//
-// console.log(ast.program.body[0].expression.left.value);
-
 import * as parser from '@babel/parser';
 import * as fs from 'fs';
-import * as babel from '@babel/core';
+import _traverse from "@babel/traverse";
 
-const filePath = './test.ts'; // Specify the path to your TypeScript file
+const traverse = _traverse.default;
+
+//const filePath = './test1.js'; // Specify the path to your TypeScript file
+const filePath = './bookstore-backend-stack.ts'; // Specify the path to your TypeScript file
+//const filePath = './test.ts'; // Specify the path to your TypeScript file
 
 const code = fs.readFileSync(filePath, 'utf-8');
-
-
-
-// function extractAWSInvocations(ast) {
-//     const invocations = [];
-//     const visited = new Set(); // Track visited nodes to avoid circular references
-//
-//     function traverse(node) {
-//         if (visited.has(node)) {
-//             return; // Skip already visited node to prevent loops
-//         }
-//         visited.add(node);
-//
-//         if (babel.types.isCallExpression(node)) {
-//             const expression = node.callee;
-//             if (babel.types.isMemberExpression(expression)) {
-//                 const property = expression.property.name;
-//                 if (
-//                     property === 's3' ||
-//                     property === 'lambda' ||
-//                     property.startsWith('aws_')
-//                 ) {
-//                     invocations.push(property);
-//                 }
-//                 traverse(expression); // Traverse nested calls
-//             }
-//         }
-//
-//         // Recursively traverse children
-//         babel.types.traverse(node, {
-//             enter(child) {
-//                 traverse(child);
-//             },
-//         });
-//     }
-//
-//     traverse(ast);
-//
-//     return invocations;
-// }
-
-// // Parse the MJS code into an AST
-// const code = `// Your MJS code here`;
-// const ast = babel.parse(code, { sourceType: 'module' });
 
 const ast = parser.parse(code, {
     sourceType: 'module',
     plugins: ['typescript'],
 });
 
-console.log(ast.program.body[5].declaration.body.body[0].body);
+traverse(ast, {
+    ExportNamedDeclaration(path) {
+         console.log(path);
+            const classDeclaration = path.get('declaration');
+            if (classDeclaration.isClassDeclaration()) {
+              const classBody = classDeclaration.get('body');
 
-const astJson = JSON.parse(JSON.stringify(ast));
-console.log(astJson.program);
-
-// Define a function for depth-first traversal on the JSON representation
-function traverse(node, path = []) {
-    if (node && typeof node === 'object') {
-        // Check conditions for AWS Lambda invocation
-        if (
-            node.type === 'NewExpression' &&
-            node.callee &&
-            node.callee.type === 'MemberExpression' &&
-            node.callee.object.name === 'lambda' &&
-            node.callee.property.name === 'Function'
-        ) {
-            console.log('Found AWS Lambda invocation');
-            console.log('Path:', path.join(' -> '));
-        }
-
-        // Check conditions for S3 invocation
-        if (
-            node.type === 'NewExpression' &&
-            node.callee &&
-            node.callee.type === 'MemberExpression' &&
-            node.callee.object &&
-            node.callee.object.type === 'MemberExpression' &&
-            node.callee.object.object.name === 's3_notifications' &&
-            node.callee.object.property.name === 'LambdaDestination'
-        ) {
-            console.log('Found S3 Invocation');
-            console.log('Path:', path.join(' -> '));
-        }
-
-        // Add additional conditions for other invocations as needed
-        // For example, if there's another type of invocation, check for it here.
-
-        // Recursively traverse child nodes
-        for (const key in node) {
-            if (key !== 'type' && node.hasOwnProperty(key)) {
-                traverse(node[key], [...path, key]);
+              // Iterate through the body of ClassDeclaration
+              classBody.get('body').forEach(bodyNode => {
+                // Check if the node is ExpressionStatement
+                if (bodyNode.isExpressionStatement()) {
+                  // Perform actions with ExpressionStatement
+                  console.log('ExpressionStatement found:', bodyNode.node);
+                }
+              });
             }
+    }
+})
+
+
+traverse(ast, {
+    VariableDeclaration(path) {
+        const declarations = path.get('declarations');
+
+        declarations.forEach(declaration => {
+            const init = declaration.get('init');
+
+            if (init && (init.isCallExpression() || init.isNewExpression())) {
+                const calleeMemberExpression = init.get('callee');
+                const argumentsNodes = init.get('arguments');
+
+                console.log('Callee:', calleeMemberExpression.node);
+                argumentsNodes.forEach(argumentNode => {
+                    console.log('  -> Argument:', argumentNode.node);
+                });
+                console.log('\n'); 
+            }
+        });
+    },
+});
+
+function whoCalledWhom(ast) {
+    console.log(ast);
+    const relationships = {}; 
+
+    function traverse(node, caller) {
+
+        if (node.program.type === "VariableDeclaration") {
+            node.declarations.forEach(declarator => {
+                const { id, init } = declarator;
+
+                if (init && (init.type === "CallExpression" || init.type === "NewExpression")) {
+                    const calleeName = getCalleeName(init.callee); /
+                  //
+                    if (caller) {
+                        relationships[caller] = relationships[caller] || {}; 
+                        relationships[caller][calleeName] = id.name;
+                    } else {
+                        relationships[calleeName] = id.name; 
+                    }
+                }
+            });
+        } else {
+            // Recursively traverse child nodes
+            node?.children?.forEach(child => traverse(child, caller));
         }
     }
+
+    function getCalleeName(calleeNode) {
+        if (calleeNode.type === "MemberExpression") {
+            return calleeNode.property.name;
+        } else {
+            return calleeNode.name;
+        }
+    }
+
+    traverse(ast, null);
+    return relationships;
 }
 
-traverse(astJson);
-// const invocations = extractAWSInvocations(ast);
-// console.log(invocations); // Output: ["lambda.Function", ...]
+const relationships = whoCalledWhom(ast);
+console.log(relationships);

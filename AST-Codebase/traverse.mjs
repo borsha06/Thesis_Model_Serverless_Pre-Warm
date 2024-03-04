@@ -4,7 +4,9 @@
 import * as parser from '@babel/parser';
 import * as fs from 'fs';
 import * as babel from '@babel/core';
-import * as traverse from '@babel/traverse';
+import _traverse from "@babel/traverse";
+
+const traverse = _traverse.default;
 
 const filePath = './test.ts'; // Specify the path to your TypeScript file
 
@@ -20,5 +22,7 @@ const ast = parser.parse(code, {
 });
 
 traverse(ast, {
-
+    enter(path){
+        console.log(path);
+    }
 })

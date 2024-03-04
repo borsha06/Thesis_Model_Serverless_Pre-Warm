@@ -24,7 +24,7 @@ import java.io.FileWriter;
 
 public class Composer {
     public static void main(String[] args) throws IOException {
-        String resourceFilePath = "./serverless.json";
+        String resourceFilePath = "./serverless2.json";
         Graph graph = new Graph();
         String cloudProvider = "";
         createModel(resourceFilePath, graph);
@@ -151,44 +151,7 @@ public class Composer {
                                 String nameOfNode = resource.getKey();
                                 JsonNode resourceNode = resource.getValue();
 
-                              //  System.out.println(nameOfNode);
-                               // System.out.println(resourceNode);
-
-//                                JsonNode type = resourceNode.path("Type");
-//                                if (isAwsServerlessFunction(type)) {
-//                                    JsonNode properties = resourceNode.path("Properties");
-//                                    if (properties.has("Events")) {
-//                                        JsonNode eventNode = properties.path("Events");
-//                                        Iterator<JsonNode> eventIterator = eventNode.elements();
-//                                        while (eventIterator.hasNext()) {
-//                                            JsonNode event = eventIterator.next();
-//                                            JsonNode typeNode = event.path("Type");
-//                                            if (typeNode.asText().contains("S3")) {
-//                                                JsonNode propertiesOfEvent = event.path("Properties");
-//                                                JsonNode bucketOfEvent = propertiesOfEvent.path("Bucket");
-//
-//
-//                                                JsonNode triggerDB = bucketOfEvent.path("Ref");
-//                                                String nameOfTriggerDB = triggerDB.asText();
-//                                                Node dbNode = graph.getNodeByName(nameOfTriggerDB);
-//                                                Node triggeredNode = graph.getNodeByName(nameOfNode);
-//
-//
-//                                                Direction arrow = new Direction(dbNode, triggeredNode);
-//                                                dbNode.addOutArrow(arrow);
-//                                            }
-//                                        }
-//                                    }
-//                                }
                             }
-                                // Check if the resource node has "dependsOn" property
-//                                if (resourceNode.has("dependsOn")) {
-//                                    // Get the "dependsOn" array
-//                                    JsonNode dependsOnNode = resourceNode.path("dependsOn");
-//
-//                                    // Print the dependsOn values
-//                                    System.out.println("Resource: " + resourceNode + ", dependsOn: " + dependsOnNode);
-//                                }
                         }
                     } catch (IOException e) {
                         System.err.println("File could not be read");
@@ -274,9 +237,6 @@ public class Composer {
 
                 JsonNode properties = resourceNode.path("Properties");
 
-//                System.out.println(properties);
-
-
                 Function function = new Function(nodeName);
                 configureFunction(function, properties, cloudProvider);
 
@@ -295,15 +255,10 @@ public class Composer {
                 setDynamoName(dynamo, properties);
                 graph.addNode(dynamo);
 
-              //  System.out.println(graph);
             }
         }
 
         awsResources = awsResourcesNode.fields();
-
-     //   System.out.println(awsResourcesNode);
-
-      //  System.out.println(awsResources);
 
         while (awsResources.hasNext()) {
 
@@ -311,9 +266,6 @@ public class Composer {
 
             String nameOfNode = resource.getKey();
             JsonNode resourceNode = resource.getValue();
-
-       //     System.out.println(nameOfNode);
-        //    System.out.println(resourceNode);
 
             JsonNode type = resourceNode.path("Type");
             if (isAwsServerlessFunction(type)) {
@@ -421,24 +373,6 @@ public class Composer {
 
             // Add the node to the result JSON
             resultNode.set(node.getName(), nodeObject);
-
-//            List<Direction> outDirections = node.getOutDirections();
-//            if (!outDirections.isEmpty()) {
-//                ArrayNode arrowsArray = objectMapper.createArrayNode();
-//                for (Direction arrow : outDirections) {
-//                    ObjectNode arrowObject = objectMapper.createObjectNode();
-//                    arrowObject.put("Predecessor", arrow.getPredecessor().getName());
-//                    arrowObject.put("Successor", arrow.getSuccessor().getName());
-//                    arrowObject.put("Order", arrow.getOrder());
-//                    arrowObject.put("SynchronizedCall", arrow.isSynchronizedCall());
-//                    arrowObject.put("ArrowName", arrow.getName());
-//
-//                    arrowsArray.add(arrowObject);
-//                }
-//                nodeObject.set("OutDirections", arrowsArray);
-//            }
-
-            // Add the node to the result JSON
             resultNode.set(node.getName(), nodeObject);
         }
 
